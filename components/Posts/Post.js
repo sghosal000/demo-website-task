@@ -23,6 +23,7 @@ const Carousel = styled.div(() => ({
     display: 'none',
   },
   position: 'relative',
+  scrollSnapType: 'x mandatory'
 }));
 
 const CarouselItem = styled.div(() => ({
@@ -46,7 +47,8 @@ const Content = styled.div(() => ({
 
 const Button = styled.button(() => ({
   position: 'absolute',
-  bottom: 0,
+  top: '50%',
+  transform: 'translatey(-50%)',
   backgroundColor: 'rgba(255, 255, 255, 0.5)',
   border: 'none',
   color: '#000',
@@ -65,20 +67,22 @@ const NextButton = styled(Button)`
 
 const Post = ({ post }) => {
   const carouselRef = useRef(null);
-
+  
   const handleNextClick = () => {
     if (carouselRef.current) {
+      const item = carouselRef.current.getBoundingClientRect()
       carouselRef.current.scrollBy({
-        left: 50,
+        left: item.width,
         behavior: 'smooth',
       });
     }
   };
-
+  
   const handlePrevClick = () => {
     if (carouselRef.current) {
+      const item = carouselRef.current.getBoundingClientRect()
       carouselRef.current.scrollBy({
-        left: -70,
+        left: -item.width,
         behavior: 'smooth',
       });
     }
