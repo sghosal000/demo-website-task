@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useRef } from 'react';
 import styled from '@emotion/styled';
+import Header from './Header';
 
 const PostContainer = styled.div(() => ({
   width: '300px',
@@ -67,7 +68,7 @@ const NextButton = styled(Button)`
 
 const Post = ({ post }) => {
   const carouselRef = useRef(null);
-  
+
   const handleNextClick = () => {
     if (carouselRef.current) {
       const item = carouselRef.current.getBoundingClientRect()
@@ -77,7 +78,7 @@ const Post = ({ post }) => {
       });
     }
   };
-  
+
   const handlePrevClick = () => {
     if (carouselRef.current) {
       const item = carouselRef.current.getBoundingClientRect()
@@ -90,6 +91,7 @@ const Post = ({ post }) => {
 
   return (
     <PostContainer>
+      <Header user={post.user} />
       <CarouselContainer>
         <Carousel ref={carouselRef}>
           {post.images.map((image, index) => (
@@ -112,8 +114,14 @@ const Post = ({ post }) => {
 Post.propTypes = {
   post: PropTypes.shape({
     content: PropTypes.any,
-    images: PropTypes.shape({
-      map: PropTypes.func,
+    images: PropTypes.arrayOf(
+      PropTypes.shape({
+        url: PropTypes.string,
+      })
+    ),
+    user: PropTypes.shape({
+      name: PropTypes.string,
+      email: PropTypes.string,
     }),
     title: PropTypes.any,
   }),
