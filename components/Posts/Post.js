@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React, { useRef } from 'react';
 import styled from '@emotion/styled';
 import Header from './Header';
-import propTypes from 'prop-types';
 
 const PostContainer = styled.div(() => ({
   width: '300px',

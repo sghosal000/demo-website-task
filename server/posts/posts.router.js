@@ -6,7 +6,8 @@ const { fetchUserById } = require('../users/users.service');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  const posts = await fetchPosts();
+  const { start = 0, limit = 10 } = req.query
+  const posts = await fetchPosts({ start, limit });
 
   const fetchPromises = posts.map(async (post) => {
     // TODO use this route to fetch photos for each post
