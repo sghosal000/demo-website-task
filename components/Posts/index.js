@@ -33,42 +33,61 @@ const LoadMoreButton = styled.button(() => ({
 }));
 
 export default function Posts() {
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-
   const { isSmallerDevice } = useWindowWidth();
+
+  const [posts, setPosts] = useState([]);
+  const [start, setStart] = useState(0)
+  const [limit] = useState(isSmallerDevice ? 5 : 10)
+  const [hasMore, setHasMore] = useState(true)
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('')
 
   useEffect(() => {
     const fetchPost = async () => {
+      setIsLoading(true);
+
       const { data: posts } = await axios.get('/api/v1/posts', {
-        params: { start: 0, limit: isSmallerDevice ? 5 : 10 },
+        params: { start, limit },
       });
-      setPosts(posts);
+      setPosts(old => [...old, ...posts]);
+      if (posts.length < limit) {
+        setHasMore(false)
+        setMessage('No more posts available.. ')
+      }
+
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
+      setTimeout(() => {
+        setMessage('')
+      }, 5000);
     };
 
     fetchPost();
-  }, [isSmallerDevice]);
+  }, [isSmallerDevice, start]);
 
   const handleClick = () => {
-    setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+    setStart(prev => prev + limit)
   };
 
   return (
     <Container>
       <PostListContainer>
-        {posts.map(post => (
-          <Post post={post} />
+        {posts.map((post, index) => (
+          <Post key={index} post={post} />
         ))}
       </PostListContainer>
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <LoadMoreButton onClick={handleClick} disabled={isLoading}>
-          {!isLoading ? 'Load More' : 'Loading...'}
-        </LoadMoreButton>
+        {
+          hasMore &&
+          <LoadMoreButton onClick={handleClick} disabled={isLoading}>
+            {!isLoading ? 'Load More' : 'Loading...'}
+          </LoadMoreButton>
+        }
+        {
+          message && <p>{message}</p>
+        }
       </div>
     </Container>
   );
